@@ -1,6 +1,6 @@
 {
   "name": "@juli-os/basin",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "juli-os foundation: versioned SQLite migrations on node:sqlite — open connections, build schema, track versions. Zero npm dependencies.",
   "type": "module",
   "main": "./dist/index.js",

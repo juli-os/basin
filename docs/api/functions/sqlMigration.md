@@ -8,7 +8,7 @@
 
 > **sqlMigration**(`version`, `name`, `script`): [`Migration`](../interfaces/Migration.md)
 
-Defined in: core.ts:82
+Defined in: [core.ts:89](https://github.com/juli-os/basin/blob/main/src/basin/core.ts#L89)
 
 纯 SQL 迁移的便捷构造——up 就是一段 script（须自幂等）。
 

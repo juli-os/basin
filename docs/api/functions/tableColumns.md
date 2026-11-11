@@ -8,7 +8,7 @@
 
 > **tableColumns**(`db`, `table`): `string`[]
 
-Defined in: core.ts:117
+Defined in: [core.ts:124](https://github.com/juli-os/basin/blob/main/src/basin/core.ts#L124)
 
 表的列名清单（PRAGMA table_info 封装——幂等加列的判据）。
 
@@ -16,7 +16,7 @@ Defined in: core.ts:117
 
 ### db
 
-`DatabaseSync`
+[`BasinDb`](../interfaces/BasinDb.md)
 
 ### table
 

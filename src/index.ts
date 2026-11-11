@@ -5,5 +5,5 @@
 export {
   openDatabase, currentVersion, validateMigrations, defineMigration, sqlMigration,
   migrate, verify, tableColumns, addColumnIfMissing,
-  type Migration, type MigrateReport, type VerifyReport,
+  type Migration, type MigrateReport, type VerifyReport, type BasinDb,
 } from './basin/core.ts';

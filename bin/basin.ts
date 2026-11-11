@@ -29,6 +29,8 @@ const usage = (): never => {
 };
 
 if ((cmd !== 'migrate' && cmd !== 'verify') || !dbPath) usage();
+// usage() 是 never 返回，TS 推不出来——此处 dbPath 必有值。
+const dbFile = dbPath as string;
 
 const loadMigrations = async () => {
   if (!defPath) return [];
@@ -44,21 +46,21 @@ const { openDatabase, migrate, verify } = await import('../src/index.ts');
 if (cmd === 'migrate') {
   const migrations = await loadMigrations();
   if (!defPath) {
-    const db = openDatabase(dbPath);
-    console.log(`basin migrate: 已建库 ${dbPath}（未提供 --def，版本保持 v${verify(db, []).version}）`);
+    const db = openDatabase(dbFile);
+    console.log(`basin migrate: 已建库 ${dbFile}（未提供 --def，版本保持 v${verify(db, []).version}）`);
     db.close();
     process.exit(0);
   }
-  const db = openDatabase(dbPath);
+  const db = openDatabase(dbFile);
   const report = migrate(db, migrations);
   console.log(`basin migrate: v${report.from} → v${report.to}`);
   for (const a of report.applied) console.log(`  + v${a.version} ${a.name}`);
   if (report.applied.length === 0) console.log('  （已最新，无事可做）');
   db.close();
 } else {
-  const db = openDatabase(dbPath);
+  const db = openDatabase(dbFile);
   const migrations = await loadMigrations();
   const r = verify(db, migrations);
-  console.log(`basin verify: ${dbPath} 当前 v${r.version}` + (migrations.length ? ` / 最新 v${r.latest} ${r.upToDate ? '（已追平）' : '（落后）'}` : '（未提供 --def，只报版本）'));
+  console.log(`basin verify: ${dbFile} 当前 v${r.version}` + (migrations.length ? ` / 最新 v${r.latest} ${r.upToDate ? '（已追平）' : '（落后）'}` : '（未提供 --def，只报版本）'));
   db.close();
 }

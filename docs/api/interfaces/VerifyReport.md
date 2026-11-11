@@ -6,7 +6,7 @@
 
 # Interface: VerifyReport
 
-Defined in: core.ts:33
+Defined in: [core.ts:40](https://github.com/juli-os/basin/blob/main/src/basin/core.ts#L40)
 
 verify 的只读报告。
 
@@ -16,7 +16,7 @@ verify 的只读报告。
 
 > `readonly` **latest**: `number`
 
-Defined in: core.ts:37
+Defined in: [core.ts:44](https://github.com/juli-os/basin/blob/main/src/basin/core.ts#L44)
 
 迁移表的最新版本（空表为 0）。
 
@@ -26,7 +26,7 @@ Defined in: core.ts:37
 
 > `readonly` **upToDate**: `boolean`
 
-Defined in: core.ts:39
+Defined in: [core.ts:46](https://github.com/juli-os/basin/blob/main/src/basin/core.ts#L46)
 
 version === latest。
 
@@ -36,6 +36,6 @@ version === latest。
 
 > `readonly` **version**: `number`
 
-Defined in: core.ts:35
+Defined in: [core.ts:42](https://github.com/juli-os/basin/blob/main/src/basin/core.ts#L42)
 
 库当前的 user_version。

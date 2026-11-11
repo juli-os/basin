@@ -72,7 +72,8 @@ test('迁移中途抛错：回滚且版本不前移，修好后可重跑', () =>
   migrate(db, [M1]);
   assert.throws(() => migrate(db, [M1, bad]), /boom/);
   assert.equal(currentVersion(db), 1, '版本不前移');
-  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM sqlite_master WHERE name='doomed'").get()['n'], 0, '回滚干净');
+  const doomed = db.prepare("SELECT COUNT(*) AS n FROM sqlite_master WHERE name='doomed'").get() as { n: number };
+  assert.equal(doomed['n'], 0, '回滚干净');
   const fixed = sqlMigration(2, 'fixed', 'CREATE TABLE IF NOT EXISTS doomed (id TEXT PRIMARY KEY)');
   const r = migrate(db, [M1, fixed]);
   assert.equal(r.to, 2, '修好后重跑通过');

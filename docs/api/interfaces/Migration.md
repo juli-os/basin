@@ -6,7 +6,7 @@
 
 # Interface: Migration
 
-Defined in: core.ts:16
+Defined in: [core.ts:23](https://github.com/juli-os/basin/blob/main/src/basin/core.ts#L23)
 
 一条版本化迁移：把库从 version-1 推到 version。up 必须幂等。
 
@@ -16,7 +16,7 @@ Defined in: core.ts:16
 
 > `readonly` **name**: `string`
 
-Defined in: core.ts:18
+Defined in: [core.ts:25](https://github.com/juli-os/basin/blob/main/src/basin/core.ts#L25)
 
 ***
 
@@ -24,13 +24,13 @@ Defined in: core.ts:18
 
 > `readonly` **up**: (`db`) => `void`
 
-Defined in: core.ts:19
+Defined in: [core.ts:26](https://github.com/juli-os/basin/blob/main/src/basin/core.ts#L26)
 
 #### Parameters
 
 ##### db
 
-`DatabaseSync`
+[`BasinDb`](BasinDb.md)
 
 #### Returns
 
@@ -42,4 +42,4 @@ Defined in: core.ts:19
 
 > `readonly` **version**: `number`
 
-Defined in: core.ts:17
+Defined in: [core.ts:24](https://github.com/juli-os/basin/blob/main/src/basin/core.ts#L24)

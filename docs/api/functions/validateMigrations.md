@@ -8,7 +8,7 @@
 
 > **validateMigrations**(`migrations`): `void`
 
-Defined in: core.ts:56
+Defined in: [core.ts:63](https://github.com/juli-os/basin/blob/main/src/basin/core.ts#L63)
 
 校验迁移表：版本从 1 起严格递增且不重复。校验先于任何执行。
 

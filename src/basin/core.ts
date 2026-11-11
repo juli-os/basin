@@ -12,11 +12,18 @@
 
 import { DatabaseSync } from 'node:sqlite';
 
+/** basin 操作库所需的最小结构接口——node:sqlite 的 DatabaseSync 天然满足；
+ * duck-type 的测试替身只要凑齐 prepare/get/exec 也能直接传入。 */
+export interface BasinDb {
+  prepare(sql: string): { get(...args: unknown[]): unknown; all(...args: unknown[]): unknown[]; run(...args: unknown[]): unknown };
+  exec(sql: string): unknown;
+}
+
 /** 一条版本化迁移：把库从 version-1 推到 version。up 必须幂等。 */
 export interface Migration {
   readonly version: number;
   readonly name: string;
-  readonly up: (db: DatabaseSync) => void;
+  readonly up: (db: BasinDb) => void;
 }
 
 /** migrate 的执行报告。 */
@@ -43,12 +50,12 @@ export interface VerifyReport {
 export const openDatabase = (path: string): DatabaseSync => new DatabaseSync(path);
 
 /** 读库的当前迁移版本（PRAGMA user_version）。 */
-export const currentVersion = (db: DatabaseSync): number => {
+export const currentVersion = (db: BasinDb): number => {
   const row = db.prepare('PRAGMA user_version').get() as { user_version?: number } | undefined;
   return Number(row?.['user_version'] ?? 0);
 };
 
-const writeVersion = (db: DatabaseSync, version: number): void => {
+const writeVersion = (db: BasinDb, version: number): void => {
   db.exec(`PRAGMA user_version = ${Math.floor(version)}`);
 };
 
@@ -70,7 +77,7 @@ export const validateMigrations = (migrations: readonly Migration[]): void => {
 export const defineMigration = (
   version: number,
   name: string,
-  up: (db: DatabaseSync) => void,
+  up: (db: BasinDb) => void,
 ): Migration => {
   if (!Number.isInteger(version) || version < 1) {
     throw new Error(`迁移版本必须是 >=1 的整数，收到 ${version}（${name}）`);
@@ -85,7 +92,7 @@ export const sqlMigration = (version: number, name: string, script: string): Mig
   });
 
 /** 应用所有比当前版本高的迁移。每条独立事务，失败即停且库停在最后成功版本。 */
-export const migrate = (db: DatabaseSync, migrations: readonly Migration[]): MigrateReport => {
+export const migrate = (db: BasinDb, migrations: readonly Migration[]): MigrateReport => {
   validateMigrations(migrations);
   const from = currentVersion(db);
   const applied: { version: number; name: string }[] = [];
@@ -106,7 +113,7 @@ export const migrate = (db: DatabaseSync, migrations: readonly Migration[]): Mig
 };
 
 /** 只读核对：报当前版本与迁移表最新版，是否追平。不执行任何写。 */
-export const verify = (db: DatabaseSync, migrations: readonly Migration[]): VerifyReport => {
+export const verify = (db: BasinDb, migrations: readonly Migration[]): VerifyReport => {
   validateMigrations(migrations);
   const version = currentVersion(db);
   const latest = migrations.length === 0 ? 0 : migrations[migrations.length - 1]!.version;
@@ -114,7 +121,7 @@ export const verify = (db: DatabaseSync, migrations: readonly Migration[]): Veri
 };
 
 /** 表的列名清单（PRAGMA table_info 封装——幂等加列的判据）。 */
-export const tableColumns = (db: DatabaseSync, table: string): string[] => {
+export const tableColumns = (db: BasinDb, table: string): string[] => {
   if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(table)) {
     throw new Error(`表名只允许字母数字下划线，收到 ${table}`);
   }
@@ -124,7 +131,7 @@ export const tableColumns = (db: DatabaseSync, table: string): string[] => {
 
 /** 幂等加列：列不存在才执行 DDL。返回是否真的加了（false = 本来就有）。 */
 export const addColumnIfMissing = (
-  db: DatabaseSync,
+  db: BasinDb,
   table: string,
   column: string,
   ddl: string,

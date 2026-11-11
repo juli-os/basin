@@ -6,6 +6,7 @@
 
 ## Interfaces
 
+- [BasinDb](interfaces/BasinDb.md)
 - [MigrateReport](interfaces/MigrateReport.md)
 - [Migration](interfaces/Migration.md)
 - [VerifyReport](interfaces/VerifyReport.md)
