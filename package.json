@@ -1,0 +1,50 @@
+{
+  "name": "@juli-os/basin",
+  "version": "0.1.0",
+  "description": "juli-os foundation: versioned SQLite migrations on node:sqlite — open connections, build schema, track versions. Zero npm dependencies.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "basin": "./dist/basin.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && esbuild src/index.ts --bundle --platform=node --format=esm --target=node22 --outfile=dist/index.js && esbuild bin/basin.ts --bundle --platform=node --format=esm --target=node22 --outfile=dist/basin.js && chmod +x dist/basin.js && python3 scripts/postbuild.py",
+    "test": "node --test \"test/*.test.ts\"",
+    "smoke:dist": "node --input-type=module -e \"import('./dist/index.js').then(async m => { const { join } = await import('node:path'); const { tmpdir } = await import('node:os'); const db = m.openDatabase(join(tmpdir(), 'basin-dist-' + Date.now() + '.db')); const mg = m.sqlMigration(1, 'smoke', 'CREATE TABLE IF NOT EXISTS t (id TEXT PRIMARY KEY)'); const r = m.migrate(db, [mg]); if (r.to !== 1 || !m.verify(db, [mg]).upToDate) process.exit(1); console.log('DIST SMOKE OK'); })\"",
+    "docs:gen": "node scripts/gen-docs.mjs && typedoc",
+    "docs:build": "npm run docs:gen && mkdocs build --strict",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "esbuild": "^0.24.0",
+    "typedoc": "^0.28.20",
+    "typedoc-plugin-markdown": "^4.14.1",
+    "typescript": "^5.6.0"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/juli-os/basin.git"
+  }
+}
